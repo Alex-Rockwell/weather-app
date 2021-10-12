@@ -12,11 +12,23 @@ module.exports = async function(city = '') {
     uri,
     qs: {
       appid: KEY,
-      q: city
+      q: city,
+      units: 'metric'
     },
     json: true
   }
 
-  const response = await rp(options)
-  console.log(response)
+  try {
+    const data = await rp(options)
+    const celsius = (Math.round(data.main.temp*10))/10
+    return {
+      weather: `${data.name}: ${celsius}`,
+      error: null
+    }
+  } catch (error) {
+    return {
+      weather: null,
+      error: error.error.message
+    }
+  }
 }
